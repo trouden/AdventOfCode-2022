@@ -12,7 +12,7 @@ public class Day1 : BaseDay
 
     public async Task<ICollection<string>> GetPuzzleInput()
     {
-        var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FileName);
+        var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Day1", FileName);
 
         return await File.ReadAllLinesAsync(filePath, Encoding.UTF8);
     }
