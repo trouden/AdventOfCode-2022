@@ -39,7 +39,7 @@ async Task Interface(IServiceProvider services)
         Console.WriteLine($"[{day.Day}] - {day.DayName}");
     }
 
-    Console.WriteLine("[Enter] - Latest");
+    Console.WriteLine("[Default] - Latest");
     Console.WriteLine();
 
     var input = Console.ReadLine();
