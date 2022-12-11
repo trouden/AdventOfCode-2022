@@ -4,8 +4,6 @@ namespace AdventOfCode.Day1;
 
 public class Day1 : BaseDayWithPuzzleInput
 {
-    private const string FileName = "PuzzleInput.txt";
-
     public override int Day => 1;
     public override string DayName => "Day 1: Calorie Counting";
 
