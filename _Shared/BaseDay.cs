@@ -7,9 +7,9 @@ public abstract class BaseDay : IDay
     public abstract int Day { get; }
     public abstract string DayName { get; }
 
-    public abstract Task SolveChallenge1();
+    public virtual Task SolveChallenge1() => Task.CompletedTask;
 
-    public abstract Task SolveChallenge2();
+    public virtual Task SolveChallenge2() => Task.CompletedTask;
 }
 
 public abstract class BaseDayWithPuzzleInput : BaseDay

@@ -1,126 +1,125 @@
 ﻿using AdventOfCode._Shared;
 
-namespace AdventOfCode.Day2
+namespace AdventOfCode.Day2;
+
+public class Day2 : BaseDayWithPuzzleInput
 {
-    public class Day2 : BaseDayWithPuzzleInput
+    public override int Day => 2;
+    public override string DayName => "Day 2: Rock Paper Scissors";
+
+    private enum RockPaperScissors
     {
-        public override int Day => 2;
-        public override string DayName => "Day 2: Rock Paper Scissors";
+        Rock = 1,
+        Paper = 2,
+        Scissors = 3
+    }
 
-        private enum RockPaperScissors
+    private class RockPaperScissorsComparer : IComparer<RockPaperScissors>
+    {
+        public RockPaperScissors LosesTo(RockPaperScissors input) =>
+            input switch
+            {
+                RockPaperScissors.Rock => RockPaperScissors.Paper,
+                RockPaperScissors.Paper => RockPaperScissors.Scissors,
+                RockPaperScissors.Scissors => RockPaperScissors.Rock,
+
+                _ => throw new ArgumentOutOfRangeException(nameof(input), input, null)
+            };
+
+        public RockPaperScissors WinsFrom(RockPaperScissors input) =>
+            input switch
+            {
+                RockPaperScissors.Rock => RockPaperScissors.Scissors,
+                RockPaperScissors.Paper => RockPaperScissors.Rock,
+                RockPaperScissors.Scissors => RockPaperScissors.Paper,
+
+                _ => throw new ArgumentOutOfRangeException(nameof(input), input, null)
+            };
+
+        public int Compare(RockPaperScissors x, RockPaperScissors y)
         {
-            Rock = 1,
-            Paper = 2,
-            Scissors = 3
+            if (x == y) return 3;
+
+            return WinsFrom(x) == y ? 6 : 0;
         }
+    }
 
-        private class RockPaperScissorsComparer : IComparer<RockPaperScissors>
-        {
-            public RockPaperScissors LosesTo(RockPaperScissors input) =>
-                input switch
+    public override async Task SolveChallenge1()
+    {
+        var input = await GetPuzzleInput();
+
+        var parsedInput = input
+            .Select(i => i.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Select(
+                i =>
                 {
-                    RockPaperScissors.Rock => RockPaperScissors.Paper,
-                    RockPaperScissors.Paper => RockPaperScissors.Scissors,
-                    RockPaperScissors.Scissors => RockPaperScissors.Rock,
+                    var parsed = i.Select(s => s switch
+                    {
+                        "A" or "X" => RockPaperScissors.Rock,
+                        "B" or "Y" => RockPaperScissors.Paper,
+                        "C" or "Z" => RockPaperScissors.Scissors,
+                        _ => throw new ArgumentOutOfRangeException(nameof(s), s, null)
+                    }).ToList();
 
-                    _ => throw new ArgumentOutOfRangeException(nameof(input), input, null)
-                };
+                    return (opponent: parsed[0], me: parsed[1]);
+                })
+            .ToList();
 
-            public RockPaperScissors WinsFrom(RockPaperScissors input) =>
-                input switch
+        var points = 0;
+
+        var comparer = new RockPaperScissorsComparer();
+
+        foreach (var round in parsedInput)
+        {
+            points += (int)round.me;
+            points += comparer.Compare(round.me, round.opponent);
+        }
+
+        Console.WriteLine($"Challenge 1: Expected amount of points: {points}");
+    }
+
+    public override async Task SolveChallenge2()
+    {
+        var input = await GetPuzzleInput();
+
+        var comparer = new RockPaperScissorsComparer();
+
+        var parsedInput = input
+            .Select(i => i.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Select(
+                i =>
                 {
-                    RockPaperScissors.Rock => RockPaperScissors.Scissors,
-                    RockPaperScissors.Paper => RockPaperScissors.Rock,
-                    RockPaperScissors.Scissors => RockPaperScissors.Paper,
-
-                    _ => throw new ArgumentOutOfRangeException(nameof(input), input, null)
-                };
-
-            public int Compare(RockPaperScissors x, RockPaperScissors y)
-            {
-                if (x == y) return 3;
-
-                return WinsFrom(x) == y ? 6 : 0;
-            }
-        }
-
-        public override async Task SolveChallenge1()
-        {
-            var input = await GetPuzzleInput();
-
-            var parsedInput = input
-                .Select(i => i.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                .Select(
-                    i =>
+                    var opponent = i[0] switch
                     {
-                        var parsed = i.Select(s => s switch
-                        {
-                            "A" or "X" => RockPaperScissors.Rock,
-                            "B" or "Y" => RockPaperScissors.Paper,
-                            "C" or "Z" => RockPaperScissors.Scissors,
-                            _ => throw new ArgumentOutOfRangeException(nameof(s), s, null)
-                        }).ToList();
+                        "A" => RockPaperScissors.Rock,
+                        "B" => RockPaperScissors.Paper,
+                        "C" => RockPaperScissors.Scissors,
+                        _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
+                    };
 
-                        return (opponent: parsed[0], me: parsed[1]);
-                    })
-                .ToList();
-
-            var points = 0;
-
-            var comparer = new RockPaperScissorsComparer();
-
-            foreach (var round in parsedInput)
-            {
-                points += (int)round.me;
-                points += comparer.Compare(round.me, round.opponent);
-            }
-
-            Console.WriteLine($"Challenge 1: Expected amount of points: {points}");
-        }
-
-        public override async Task SolveChallenge2()
-        {
-            var input = await GetPuzzleInput();
-
-            var comparer = new RockPaperScissorsComparer();
-
-            var parsedInput = input
-                .Select(i => i.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
-                .Select(
-                    i =>
+                    // X -> lose
+                    // Y -> draw
+                    // Z -> win
+                    var me = i[1] switch
                     {
-                        var opponent = i[0] switch
-                        {
-                            "A" => RockPaperScissors.Rock,
-                            "B" => RockPaperScissors.Paper,
-                            "C" => RockPaperScissors.Scissors,
-                            _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
-                        };
+                        "X" => comparer.WinsFrom(opponent),
+                        "Y" => opponent,
+                        "Z" => comparer.LosesTo(opponent),
+                        _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
+                    };
 
-                        // X -> lose
-                        // Y -> draw
-                        // Z -> win
-                        var me = i[1] switch
-                        {
-                                "X" => comparer.WinsFrom(opponent),
-                                "Y" => opponent,
-                                "Z" => comparer.LosesTo(opponent),
-                                _ => throw new ArgumentOutOfRangeException(nameof(i), i, null)
-                        };
+                    return (opponent: opponent, me: me);
+                })
+            .ToList();
 
-                        return (opponent: opponent, me: me);
-                    })
-                .ToList();
+        var points = 0;
 
-            var points = 0;
-
-            foreach (var round in parsedInput)
-            {
-                points += (int)round.me;
-                points += comparer.Compare(round.me, round.opponent);
-            }
-
-            Console.WriteLine($"Challenge 2: Expected amount of points: {points}");
+        foreach (var round in parsedInput)
+        {
+            points += (int)round.me;
+            points += comparer.Compare(round.me, round.opponent);
         }
+
+        Console.WriteLine($"Challenge 2: Expected amount of points: {points}");
     }
 }
