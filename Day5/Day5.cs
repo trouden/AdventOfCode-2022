@@ -24,12 +24,33 @@ public class Day5 : BaseDayWithPuzzleInput
 
         foreach (var instruction in instructions.Select(ParseInstruction))
         {
-            ExecuteInstruction(listOfStacks, instruction);
+            ExecuteInstructionWithQueue(listOfStacks, instruction);
         }
 
         PrintStacks(listOfStacks);
 
         Console.WriteLine($"Challenge 1: The top container of each layer is: {string.Join("", GetTopContainers(listOfStacks))}");
+    }
+
+    public override async Task SolveChallenge2()
+    {
+        var puzzleInput = (await GetPuzzleInput()).ToArray();
+
+        var stackInfo = puzzleInput[..StackInfoLineNumber];
+        var instructions = puzzleInput[(StackInfoLineNumber + 1)..];
+
+        var listOfStacks = ParseStacks(stackInfo);
+
+        PrintStacks(listOfStacks);
+
+        foreach (var instruction in instructions.Select(ParseInstruction))
+        {
+            ExecuteInstructionWithStack(listOfStacks, instruction);
+        }
+
+        PrintStacks(listOfStacks);
+
+        Console.WriteLine($"Challenge 2: The top container of each layer is: {string.Join("", GetTopContainers(listOfStacks))}");
     }
 
     private char[] GetTopContainers(Stack<char>[] listOfStacks)
@@ -95,12 +116,23 @@ public class Day5 : BaseDayWithPuzzleInput
         };
     }
 
-    private void ExecuteInstruction(Stack<char>[] listOfStacks, Instruction instruction)
+    private void ExecuteInstructionWithQueue(Stack<char>[] listOfStacks, Instruction instruction)
     {
-        var tempStack = new Queue<char>();
+        var tempQueue = new Queue<char>();
 
         for (var i = 0; i < instruction.Amount; i++)
-            tempStack.Enqueue(listOfStacks[instruction.From - 1].Pop());
+            tempQueue.Enqueue(listOfStacks[instruction.From - 1].Pop());
+
+        foreach (var container in tempQueue)
+            listOfStacks[instruction.To - 1].Push(container);
+    }
+
+    private void ExecuteInstructionWithStack(Stack<char>[] listOfStacks, Instruction instruction)
+    {
+        var tempStack = new Stack<char>();
+
+        for (var i = 0; i < instruction.Amount; i++)
+            tempStack.Push(listOfStacks[instruction.From - 1].Pop());
 
         foreach (var container in tempStack)
             listOfStacks[instruction.To - 1].Push(container);
