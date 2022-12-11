@@ -1,21 +1,13 @@
-﻿using System.Text;
-using AdventOfCode._Shared;
+﻿using AdventOfCode._Shared;
 
 namespace AdventOfCode.Day1;
 
-public class Day1 : BaseDay
+public class Day1 : BaseDayWithPuzzleInput
 {
     private const string FileName = "PuzzleInput.txt";
 
     public override int Day => 1;
     public override string DayName => "Day 1: Calorie Counting";
-
-    public async Task<ICollection<string>> GetPuzzleInput()
-    {
-        var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Day1", FileName);
-
-        return await File.ReadAllLinesAsync(filePath, Encoding.UTF8);
-    }
 
     public override async Task SolveChallenge1()
     {

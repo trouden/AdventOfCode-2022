@@ -27,14 +27,14 @@ ServiceProvider BuildServiceProvider()
 async Task Interface(IServiceProvider services)
 {
     Console.WriteLine("Advent of Code - Day Solver");
-    var days = services.GetServices<IDay>().ToList();
+    var days = services.GetServices<IDay>().OrderBy(x => x.Day).ToList();
 
     if (days.IsNullOrEmpty()) return;
 
     Console.WriteLine("Choose day to solve:");
     Console.WriteLine();
 
-    foreach (var day in days)
+    foreach (var day in days.OrderBy(x => x.Day))
     {
         Console.WriteLine($"[{day.Day}] - {day.DayName}");
     }
